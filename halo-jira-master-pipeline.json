@@ -1,6 +1,6 @@
 {
     "pipeline": {
-        "name": "halo-jira-pre-prod",
+        "name": "halo-jira-dev",
         "roleArn": "arn:aws:iam::445121286360:role/service-role/AWSCodePipelineServiceRole-eu-west-2-test-pipeline",
         "artifactStore": {
             "type": "S3",
@@ -24,7 +24,7 @@
                             "OAuthToken": "b171179c07b243bc7dd9c07022f1dc6ea23cc0b0",
                             "Owner": "sathya61387",
                             "PollForSourceChanges": "false",
-                            "Repo": "Halo-Jira"
+                            "Repo": "Halo-jira-app"
                         },
                         "outputArtifacts": [
                             {
@@ -53,8 +53,8 @@
                             "ActionMode": "CREATE_UPDATE",
                             "RoleArn": "arn:aws:iam::445121286360:role/Halo-CloudFormation",
                             "StackName": "Jira-preprod-stack",
-                            "TemplateConfiguration": "SourceArtifact::Halo-Jira/jira-dev-parameters",
-                            "TemplatePath": "SourceArtifact::Halo-Jira/quickstart-jira-dc.template.yaml"
+                            "TemplateConfiguration": "SourceArtifact::jira-dev-parameters.json",
+                            "TemplatePath": "SourceArtifact::quickstart-jira-dc.template.yaml"
                         },
                         "outputArtifacts": [],
                         "inputArtifacts": [
