@@ -1,0 +1,95 @@
+{
+    "pipeline": {
+        "name": "halo-jira-pre-prod",
+        "roleArn": "arn:aws:iam::445121286360:role/service-role/AWSCodePipelineServiceRole-eu-west-2-test-pipeline",
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-eu-west-2-333771250891"
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "ThirdParty",
+                            "provider": "GitHub",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "Branch": "master",
+                            "OAuthToken": "b171179c07b243bc7dd9c07022f1dc6ea23cc0b0",
+                            "Owner": "sathya61387",
+                            "PollForSourceChanges": "false",
+                            "Repo": "Halo-Jira"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": [],
+                        "region": "eu-west-2",
+                        "namespace": "SourceVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "Deploy-Jira-PreProd-stack",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CloudFormation",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ActionMode": "CREATE_UPDATE",
+                            "RoleArn": "arn:aws:iam::445121286360:role/Halo-CloudFormation",
+                            "StackName": "Jira-preprod-stack",
+                            "TemplateConfiguration": "SourceArtifact::Halo-Jira/jira-dev-parameters",
+                            "TemplatePath": "SourceArtifact::Halo-Jira/quickstart-jira-dc.template.yaml"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "region": "eu-west-2",
+                        "namespace": "DeployVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Prod-Approvals",
+                "actions": [
+                    {
+                        "name": "Prod-Approvals",
+                        "actionTypeId": {
+                            "category": "Approval",
+                            "owner": "AWS",
+                            "provider": "Manual",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "CustomData": "Please review the stack. Your approval is needed to deploy the stack on production",
+                            "NotificationArn": "arn:aws:sns:eu-west-2:445121286360:Prod-Approvals"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [],
+                        "region": "eu-west-2"
+                    }
+                ]
+            }
+        ],
+        "version": 1
+    }  
+}
